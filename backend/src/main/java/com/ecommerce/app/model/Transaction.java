@@ -20,6 +20,8 @@ public class Transaction {
 
     private BigDecimal amount;
     private String description;
+
+    @Column(columnDefinition = "DATETIME")
     private LocalDateTime createdAt;
     private String referenceId;
 

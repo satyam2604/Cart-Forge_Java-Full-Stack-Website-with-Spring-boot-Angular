@@ -22,6 +22,8 @@ public class Order {
     private User user;
 
     private BigDecimal totalAmount;
+
+    @Column(columnDefinition = "DATETIME")
     private LocalDateTime createdAt;
 
     @Enumerated(EnumType.STRING)

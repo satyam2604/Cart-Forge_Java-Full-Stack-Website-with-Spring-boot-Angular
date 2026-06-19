@@ -21,14 +21,14 @@ import { FooterComponent } from '../../shared/components/footer.component';
           <i class="fas fa-check-circle"></i> {{registeredMsg}}
         </div>
         <div class="alert alert-danger" *ngIf="error">{{error}}</div>
-        <form (ngSubmit)="login()" #loginForm="ngForm" novalidate>
+        <form (ngSubmit)="login()" #loginForm="ngForm" novalidate autocomplete="off">
           <div class="form-group">
             <label>Username</label>
             <input class="form-control" [(ngModel)]="username" name="username"
               #usernameRef="ngModel" required minlength="3"
               [class.is-invalid]="usernameRef.touched && usernameRef.invalid"
               [class.is-valid]="usernameRef.touched && usernameRef.valid"
-              placeholder="Enter username">
+              placeholder="Enter username" autocomplete="off">
             <div class="invalid-feedback" *ngIf="usernameRef.touched && usernameRef.errors?.['required']">Username is required</div>
             <div class="invalid-feedback" *ngIf="usernameRef.touched && usernameRef.errors?.['minlength']">Username must be at least 3 characters</div>
           </div>
@@ -40,7 +40,7 @@ import { FooterComponent } from '../../shared/components/footer.component';
                 #passwordRef="ngModel" required minlength="6"
                 [class.is-invalid]="passwordRef.touched && passwordRef.invalid"
                 [class.is-valid]="passwordRef.touched && passwordRef.valid"
-                placeholder="Enter password">
+                placeholder="Enter password" autocomplete="off">
               <button type="button" class="toggle-pass" (click)="showPassword = !showPassword">
                 <i class="fas" [class.fa-eye]="!showPassword" [class.fa-eye-slash]="showPassword"></i>
               </button>
@@ -56,15 +56,6 @@ import { FooterComponent } from '../../shared/components/footer.component';
         </form>
         <div class="auth-footer">
           <p>Don't have an account? <a routerLink="/register">Register</a></p>
-        </div>
-        <div class="demo-accounts">
-          <p class="text-muted" style="font-size:12px;margin-bottom:8px">Demo accounts (password: password)</p>
-          <div class="demo-btns">
-            <button class="btn btn-outline btn-sm" (click)="fillDemo('customer1')">Customer</button>
-            <button class="btn btn-outline btn-sm" (click)="fillDemo('seller1')">Seller</button>
-            <button class="btn btn-outline btn-sm" (click)="fillDemo('finance1')">Finance</button>
-            <button class="btn btn-outline btn-sm" (click)="fillDemo('admin1')">Admin</button>
-          </div>
         </div>
       </div>
 
@@ -84,8 +75,6 @@ import { FooterComponent } from '../../shared/components/footer.component';
     .auth-header p { color: #6b7280; margin-top: 4px; }
     .auth-footer { text-align: center; margin-top: 16px; font-size: 14px; }
     .auth-footer a { color: #2563eb; text-decoration: none; font-weight: 500; }
-    .demo-accounts { margin-top: 20px; padding-top: 16px; border-top: 1px solid #e2e8f0; text-align: center; }
-    .demo-btns { display: flex; gap: 8px; justify-content: center; }
     .input-group { position: relative; }
     .input-group .form-control { padding-right: 40px; }
     .toggle-pass {
@@ -135,8 +124,4 @@ export class LoginComponent implements OnInit {
     });
   }
 
-  fillDemo(user: string) {
-    this.username = user;
-    this.password = 'password';
-  }
 }

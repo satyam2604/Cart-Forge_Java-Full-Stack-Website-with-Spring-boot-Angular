@@ -16,7 +16,11 @@ public class Notification {
 
     private String message;
     private String type;
+
+    @Column(name = "is_read")
     private boolean read = false;
+
+    @Column(columnDefinition = "DATETIME")
     private LocalDateTime createdAt;
 
     public Long getId() { return id; }

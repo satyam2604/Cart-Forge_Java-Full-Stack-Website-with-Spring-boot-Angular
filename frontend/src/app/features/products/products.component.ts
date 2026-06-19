@@ -196,10 +196,10 @@ const LOCK_OPTIONS = [
           <div class="form-group">
             <label>Payment Method</label>
             <div class="payment-methods">
-              <div class="pay-option" [class.selected]="topupMethod === 'UPI'" (click)="topupMethod = 'UPI'; topupTxnId = ''">
+              <div class="pay-option" [class.selected]="topupMethod === 'UPI'" (click)="topupMethod = 'UPI'; upiId = ''">
                 <i class="fas fa-mobile-alt"></i> UPI
               </div>
-              <div class="pay-option" [class.selected]="topupMethod === 'CARD'" (click)="topupMethod = 'CARD'; topupTxnId = ''">
+              <div class="pay-option" [class.selected]="topupMethod === 'CARD'" (click)="topupMethod = 'CARD'; cardNumber = ''; cardExpiry = ''; cardCvv = ''">
                 <i class="fas fa-credit-card"></i> Card
               </div>
             </div>
@@ -210,11 +210,6 @@ const LOCK_OPTIONS = [
               [class.is-valid]="upiId && isValidUpi(upiId)"
               [class.is-invalid]="upiId && !isValidUpi(upiId)">
             <div class="inv" *ngIf="upiId && !isValidUpi(upiId)">Enter a valid UPI ID (e.g. name&#64;okaxis)</div>
-            <label class="mt-2">Transaction ID</label>
-            <input class="form-control" [(ngModel)]="topupTxnId" placeholder="e.g. UPI123456789"
-              [class.is-valid]="topupTxnId.length >= 6"
-              [class.is-invalid]="topupTxnId && topupTxnId.length < 6">
-            <div class="inv" *ngIf="topupTxnId && topupTxnId.length < 6">Transaction ID must be at least 6 characters</div>
           </div>
           <div *ngIf="topupMethod === 'CARD'">
             <div class="form-group">
@@ -242,13 +237,6 @@ const LOCK_OPTIONS = [
                   [class.is-invalid]="cardCvv && cardCvv.length !== 3">
                 <div class="inv" *ngIf="cardCvv && cardCvv.length !== 3">CVV must be 3 digits</div>
               </div>
-            </div>
-            <div class="form-group">
-              <label>Transaction ID</label>
-              <input class="form-control" [(ngModel)]="topupTxnId" placeholder="e.g. CARD987654321"
-                [class.is-valid]="topupTxnId.length >= 6"
-                [class.is-invalid]="topupTxnId && topupTxnId.length < 6">
-              <div class="inv" *ngIf="topupTxnId && topupTxnId.length < 6">Transaction ID must be at least 6 characters</div>
             </div>
           </div>
           <button class="btn btn-primary btn-block mt-3" (click)="topUp()" [disabled]="topupLoading || !isTopupFormValid() || topupAmount < 100">
@@ -328,7 +316,6 @@ export class ProductsComponent implements OnInit {
   showTopup = false;
   topupAmount = 500;
   topupMethod = 'UPI';
-  topupTxnId = '';
   upiId = '';
   topupLoading = false;
   topupSuccess = '';
@@ -396,7 +383,6 @@ export class ProductsComponent implements OnInit {
   onlyDigits(e: KeyboardEvent) { if (!/\d/.test(e.key)) e.preventDefault(); }
 
   isTopupFormValid(): boolean {
-    if (!this.topupTxnId || this.topupTxnId.length < 6) return false;
     if (this.topupMethod === 'UPI') return this.isValidUpi(this.upiId);
     if (this.topupMethod === 'CARD') {
       return this.cardDigits === 16 &&
@@ -445,10 +431,11 @@ export class ProductsComponent implements OnInit {
 
   topUp() {
     this.topupLoading = true;
-    this.userService.topUpWallet(this.topupAmount, this.topupMethod, this.topupTxnId).subscribe({
+    const txnId = 'TXN' + Date.now();
+    this.userService.topUpWallet(this.topupAmount, this.topupMethod, txnId).subscribe({
       next: (res) => {
         this.topupLoading = false;
-        if (res.success) { this.walletBalance = res.walletBalance; this.topupSuccess = res.message; this.topupTxnId = ''; this.upiId = ''; this.cardNumber = ''; this.cardExpiry = ''; this.cardCvv = ''; }
+        if (res.success) { this.walletBalance = res.walletBalance; this.topupSuccess = res.message; this.upiId = ''; this.cardNumber = ''; this.cardExpiry = ''; this.cardCvv = ''; }
         else { this.topupFailure = res.message; }
       },
       error: (err) => { this.topupLoading = false; this.topupFailure = err.error?.message || 'Payment failed.'; }

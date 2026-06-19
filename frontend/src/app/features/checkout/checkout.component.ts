@@ -69,14 +69,6 @@ import { FooterComponent } from '../../shared/components/footer.component';
                     [class.is-invalid]="upiId && !isValidUpi(upiId)">
                   <div class="inv" *ngIf="upiId && !isValidUpi(upiId)">Enter a valid UPI ID (e.g. name&#64;okaxis, name&#64;upi)</div>
                 </div>
-                <div class="form-group">
-                  <label>Transaction ID</label>
-                  <input class="form-control" [(ngModel)]="transactionId" placeholder="e.g. UPI123456789"
-                    [class.is-valid]="transactionId.length >= 6"
-                    [class.is-invalid]="transactionId && transactionId.length < 6">
-                  <div class="inv" *ngIf="transactionId && transactionId.length < 6">Transaction ID must be at least 6 characters</div>
-                  <small class="text-muted">Enter FAIL... to simulate failure</small>
-                </div>
               </div>
 
               <!-- Card Fields -->
@@ -106,14 +98,6 @@ import { FooterComponent } from '../../shared/components/footer.component';
                       [class.is-invalid]="cardCvv && cardCvv.length !== 3">
                     <div class="inv" *ngIf="cardCvv && cardCvv.length !== 3">CVV must be 3 digits</div>
                   </div>
-                </div>
-                <div class="form-group">
-                  <label>Transaction ID</label>
-                  <input class="form-control" [(ngModel)]="transactionId" placeholder="e.g. CARD987654321"
-                    [class.is-valid]="transactionId.length >= 6"
-                    [class.is-invalid]="transactionId && transactionId.length < 6">
-                  <div class="inv" *ngIf="transactionId && transactionId.length < 6">Transaction ID must be at least 6 characters</div>
-                  <small class="text-muted">Enter FAIL... to simulate failure</small>
                 </div>
               </div>
             </div>
@@ -198,7 +182,6 @@ export class CheckoutComponent implements OnInit {
   validation: CheckoutValidation | null = null;
   loading = true;
   paymentMethod = 'UPI';
-  transactionId = '';
   upiId = '';
   cardNumber = '';
   cardExpiry = '';
@@ -230,7 +213,7 @@ export class CheckoutComponent implements OnInit {
 
   get cardDigits(): number { return this.cardNumber.split('').filter(c => c !== ' ').length; }
 
-  clearPayFields() { this.transactionId = ''; this.upiId = ''; this.cardNumber = ''; this.cardExpiry = ''; this.cardCvv = ''; }
+  clearPayFields() { this.upiId = ''; this.cardNumber = ''; this.cardExpiry = ''; this.cardCvv = ''; }
 
   isValidUpi(id: string): boolean { return /^[a-zA-Z0-9._-]+@[a-zA-Z]{3,}$/.test(id); }
 
@@ -245,7 +228,6 @@ export class CheckoutComponent implements OnInit {
   onlyDigits(e: KeyboardEvent) { if (!/\d/.test(e.key)) e.preventDefault(); }
 
   isPaymentFormValid(): boolean {
-    if (!this.transactionId || this.transactionId.length < 6) return false;
     if (this.paymentMethod === 'UPI') return this.isValidUpi(this.upiId);
     if (this.paymentMethod === 'CARD') {
       return this.cardDigits === 16 &&
@@ -268,7 +250,8 @@ export class CheckoutComponent implements OnInit {
 
   placeOrder() {
     this.placing = true; this.error = '';
-    this.orderService.checkout(this.paymentMethod, this.transactionId).subscribe({
+    const txnId = 'TXN' + Date.now();
+    this.orderService.checkout(this.paymentMethod, txnId).subscribe({
       next: res => { this.placing = false; this.orderResult = res; },
       error: err => { this.error = err.error?.message || 'Payment failed'; this.placing = false; }
     });

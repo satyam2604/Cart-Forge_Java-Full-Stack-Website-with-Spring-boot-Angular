@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Cart-Forge - Price Lock E-Commerce Application
 
 Full-stack e-commerce app with price locking, checkout, payments, seller dashboard, and finance reporting.
@@ -139,3 +140,6 @@ Customer starts with ₹5000 wallet balance.
    - Customer notified
 7. If seller reduces price while lock is active:
    - Price difference credited to customer's wallet
+=======
+# Cart-Forge_Java-Full-Stack-Website-with-Spring-boot-Angular
+>>>>>>> c1e9f3645e2df82fc795fe0ed4bcfcbaa38aab32

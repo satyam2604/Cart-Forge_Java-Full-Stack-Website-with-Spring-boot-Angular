@@ -22,7 +22,11 @@ public class PriceLock {
     private BigDecimal lockedPrice;
     private Integer quantity;
     private BigDecimal lockFee;
+
+    @Column(columnDefinition = "DATETIME")
     private LocalDateTime lockedAt;
+
+    @Column(columnDefinition = "DATETIME")
     private LocalDateTime expiresAt;
 
     @Enumerated(EnumType.STRING)
